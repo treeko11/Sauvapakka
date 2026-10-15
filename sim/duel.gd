@@ -27,9 +27,11 @@ const CHILL_FREEZE_AT := 5
 const CHILL_SLOW_PER_STACK := 0.1
 ## A frozen caster skips its next cast and waits at least this long before the one after.
 const FROZEN_SECONDS := 0.7
-const SHOCK_BONUS_PER_STACK := 5.0
+const SHOCK_BONUS_PER_STACK := 4.0
 const STEAM_DAMAGE := 12.0
 const CHAIN_DAMAGE_MULT := 0.5
+const MAX_WARDS := 4
+const MAX_REFLECTS := 2
 ## Damage amplification starts at this fraction of fight_seconds.
 const ESCALATION_START := 0.6
 
@@ -295,8 +297,8 @@ func _launch(s: Shot) -> void:
 	_next_uid += 1
 	if s.self_target:
 		var c := casters[s.source]
-		c.wards += s.ward_hits
-		c.reflects += s.reflect_hits
+		c.wards = mini(MAX_WARDS, c.wards + s.ward_hits)
+		c.reflects = mini(MAX_REFLECTS, c.reflects + s.reflect_hits)
 		_log("self", s.source, {"uid": s.uid, "spell": s.spell.id, "slot": s.slot, "wards": c.wards, "reflects": c.reflects})
 		return
 	s.launch_tick = tick
@@ -354,7 +356,7 @@ func _hit(s: Shot, target: Caster, attacker: Caster, chain_hit: bool) -> void:
 		dmg *= CHAIN_DAMAGE_MULT
 	if s.condition != SpellDef.Condition.NONE and _condition_met(s.condition, target):
 		dmg *= s.condition_mult
-	if target.shock > 0:
+	if target.shock > 0 and not chain_hit:
 		var bonus := SHOCK_BONUS_PER_STACK * target.shock
 		var boosted := target.wet > 0
 		if boosted:

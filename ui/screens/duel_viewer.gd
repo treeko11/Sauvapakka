@@ -39,7 +39,7 @@ func _ready() -> void:
 	_pick[1].select(mini(1, _builds.size() - 1))
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 16)
-	row.add_child(UiKit.label("Seed", 26, Palette.BIRCH))
+	row.add_child(UiKit.label("Seed", 26, Palette.BIRCH, false))
 	_seed = SpinBox.new()
 	_seed.max_value = 9999
 	_seed.custom_minimum_size = Vector2(160, 56)
@@ -47,6 +47,8 @@ func _ready() -> void:
 	_boss = CheckBox.new()
 	_boss.text = "60 s boss length"
 	row.add_child(_boss)
+	for c in row.get_children():
+		c.size_flags_vertical = SIZE_SHRINK_CENTER
 	box.add_child(row)
 	box.add_child(UiKit.button("Watch duel", _watch.bind(false), Vector2(0, 80)))
 	box.add_child(UiKit.button("Training dummy", _watch.bind(true), Vector2(0, 80)))
