@@ -94,6 +94,11 @@ func test_training_dummy() -> void:
 	screen.setup(_build("burn"), dummy, db, 0, false, true)
 	root.add_child(screen)
 	await process_frame
+	var left := [false]
+	screen.finished.connect(func(_w: int) -> void: left[0] = true)
+	_check(screen._back_button != null, "dummy has a back button")
+	screen._back_button.pressed.emit()
+	_check(left[0], "back leaves the dummy mid-session")
 	_run_to_end(screen)
 	_check(screen._ended, "dummy session ends")
 	_check(is_equal_approx(screen.duel.seconds(), 30.0), "runs 30 s")

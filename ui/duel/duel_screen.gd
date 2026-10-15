@@ -33,6 +33,8 @@ var _overlay: ArenaOverlay
 var _time_label: Label
 var _amp_label: Label
 var _pause_button: Button
+## Lets the player leave a dummy session before it ends.
+var _back_button: Button
 var _speed_buttons: Array[Button] = []
 var _inspect: PanelContainer
 var _inspect_label: Label
@@ -105,6 +107,10 @@ func _build_top_bar() -> void:
 	_pause_button = UiKit.button("Pause", _toggle_pause, Vector2(140, 56))
 	_pause_button.position = Vector2(560, 8)
 	add_child(_pause_button)
+	if dummy:
+		_back_button = UiKit.button("Back", func() -> void: finished.emit(Duel.RUNNING), Vector2(140, 56))
+		_back_button.position = Vector2(408, 8)
+		add_child(_back_button)
 
 
 func _build_speed_bar() -> void:
