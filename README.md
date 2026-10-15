@@ -75,6 +75,12 @@ godot --headless --path . --script res://tools/run_duel.gd -- burn turtle --trac
 godot --headless --path . --script res://tools/run_duel.gd -- --matrix --seeds 3
 ```
 
+Web build (needs the 4.7 export templates installed; serve `build/web` over HTTP):
+
+```bash
+godot --headless --path . --export-release "Web" build/web/index.html
+```
+
 The runner also takes `--seed N` and `--boss` (a 60-second fight), `--archetypes --depth D` (each themed enemy against its counter build and the sample builds, generic enemies as a baseline) and `--archmage` (each sample build against the boss). `--dps` runs each build against an empty wand with bottomless HP and no escalation, and reports raw damage output and mana starvation.
 
 Matrix cells show the win rate, then the row build's HP% minus the column build's HP% at the end. Duels are deterministic apart from shuffled frames, so the margin shows a close matchup better than the win rate does. Under the matrix, a table lists each build's overall win rate, average fight length, damage dealt and taken per duel, and how its damage splits between hits, Burn and Steam.
