@@ -136,9 +136,7 @@ func _cast(c: Caster) -> Array[Shot]:
 		_launch(s)
 
 	var wait := maxf(MIN_CAST_DELAY, w.frame.cast_delay + ctx.delay) * chill_factor
-	var cycle_done := w.pointer >= w.order.size()
-	if ctx.wrapped and w.frame.rule != FrameDef.Rule.OUROBOROS:
-		cycle_done = true
+	var cycle_done := ctx.wrapped or w.pointer >= w.order.size()
 	if cycle_done:
 		var recharge := maxf(0.0, w.frame.recharge_time + w.recharge_mod)
 		wait = maxf(wait, recharge)

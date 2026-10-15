@@ -2,7 +2,7 @@ class_name FrameDef
 extends Resource
 ## A wand frame: stats, plus an optional special rule on rare frames.
 
-enum Rule { NONE, TWIN_FORK, EMBER_STAFF, GLACIER_WAND, LEYLINE_ROD, OUROBOROS }
+enum Rule { NONE, TWIN_FORK, EMBER_STAFF, GLACIER_WAND, LEYLINE_ROD }
 
 @export var id: StringName
 @export var display_name: String

@@ -132,15 +132,6 @@ func test_wrapping_fires_then_recharges() -> void:
 	_check(_has_event(d, "recharge"), "wrap still recharges")
 
 
-func test_ouroboros_wrap_skips_recharge() -> void:
-	var d := _duel(["flicker", "ember", "frost_shard"], "ouroboros", {"spells_per_cast": 2})
-	d.cast_now(0)
-	d.cast_now(0)
-	_check(_has_event(d, "wrap"), "wrapped")
-	_check(not _has_event(d, "recharge"), "no recharge on Ouroboros")
-	_eq(d.casters[0].wand.pointer, 1, "continues from where the wrap stopped")
-
-
 func test_unaffordable_spell_is_skipped() -> void:
 	var d := _duel(["magic_missile", "flicker"])
 	d.casters[0].wand.mana = 5.0

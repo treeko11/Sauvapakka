@@ -6,10 +6,10 @@
 script = ExtResource("1_frame")
 id = &"ouroboros"
 display_name = "Ouroboros"
-capacity = 5
+capacity = 6
 spells_per_cast = 1
-cast_delay = 0.25
-recharge_time = 0.9
-mana_max = 100.0
-mana_regen = 50.0
-rule = 5
+cast_delay = 0.18
+recharge_time = 0.35
+mana_max = 200.0
+mana_regen = 55.0
+rule = 0
