@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="SpellDef" format=3]
+
+[ext_resource type="Script" path="res://sim/spell_def.gd" id="1_spell"]
+
+[resource]
+script = ExtResource("1_spell")
+id = &"mana_to_damage"
+display_name = "Mana to Damage"
+type_label = "Modifier"
+description = "Spends all remaining mana as bonus damage."
+kind = 1
+rarity = 2
+mana_cost = 0
+mana_to_damage = 0.25

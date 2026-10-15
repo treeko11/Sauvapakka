@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SpellDef" format=3]
+
+[ext_resource type="Script" path="res://sim/spell_def.gd" id="1_spell"]
+
+[resource]
+script = ExtResource("1_spell")
+id = &"magic_missile"
+display_name = "Magic Missile"
+type_label = "Projectile"
+description = "High damage, high mana cost, slow."
+kind = 0
+rarity = 1
+mana_cost = 35
+damage = 18.0
+travel_time = 1.0
+cast_delay = 0.3

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="SpellDef" format=3]
+
+[ext_resource type="Script" path="res://sim/spell_def.gd" id="1_spell"]
+
+[resource]
+script = ExtResource("1_spell")
+id = &"arc"
+display_name = "Arc"
+type_label = "Projectile"
+description = "Applies Shock and chains once."
+kind = 0
+rarity = 0
+mana_cost = 15
+damage = 3.0
+shock = 1
+chain = 1
+travel_time = 0.15

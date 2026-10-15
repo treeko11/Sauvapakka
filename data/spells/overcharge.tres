@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SpellDef" format=3]
+
+[ext_resource type="Script" path="res://sim/spell_def.gd" id="1_spell"]
+
+[resource]
+script = ExtResource("1_spell")
+id = &"overcharge"
+display_name = "Overcharge"
+type_label = "Modifier"
+description = "Much more damage, much more cast delay."
+kind = 1
+rarity = 1
+mana_cost = 15
+add_damage = 12.0
+cast_delay = 0.5

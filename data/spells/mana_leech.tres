@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SpellDef" format=3]
+
+[ext_resource type="Script" path="res://sim/spell_def.gd" id="1_spell"]
+
+[resource]
+script = ExtResource("1_spell")
+id = &"mana_leech"
+display_name = "Mana Leech"
+type_label = "Disruption"
+description = "Projectile that steals enemy mana."
+kind = 0
+rarity = 0
+mana_cost = 5
+damage = 1.0
+mana_drain = 20
+travel_time = 0.4

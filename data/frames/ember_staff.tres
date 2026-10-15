@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="FrameDef" format=3]
+
+[ext_resource type="Script" path="res://sim/frame_def.gd" id="1_frame"]
+
+[resource]
+script = ExtResource("1_frame")
+id = &"ember_staff"
+display_name = "Ember Staff"
+capacity = 4
+spells_per_cast = 1
+cast_delay = 0.12
+recharge_time = 0.4
+mana_max = 80.0
+mana_regen = 35.0
+rule = 2

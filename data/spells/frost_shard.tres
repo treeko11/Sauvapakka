@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SpellDef" format=3]
+
+[ext_resource type="Script" path="res://sim/spell_def.gd" id="1_spell"]
+
+[resource]
+script = ExtResource("1_spell")
+id = &"frost_shard"
+display_name = "Frost Shard"
+type_label = "Projectile"
+description = "Low damage plus 2 Chill."
+kind = 0
+rarity = 0
+mana_cost = 10
+damage = 2.0
+chill = 2
+travel_time = 0.4

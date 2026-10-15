@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="SpellDef" format=3]
+
+[ext_resource type="Script" path="res://sim/spell_def.gd" id="1_spell"]
+
+[resource]
+script = ExtResource("1_spell")
+id = &"mana_spring"
+display_name = "Mana Spring"
+type_label = "Utility"
+description = "Refunds mana on cast."
+kind = 4
+rarity = 0
+mana_cost = 0
+mana_refund = 20

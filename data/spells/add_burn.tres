@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="SpellDef" format=3]
+
+[ext_resource type="Script" path="res://sim/spell_def.gd" id="1_spell"]
+
+[resource]
+script = ExtResource("1_spell")
+id = &"add_burn"
+display_name = "Add Burn"
+type_label = "Modifier"
+description = "Gives the next projectile 2 Burn."
+kind = 1
+rarity = 0
+mana_cost = 8
+burn = 2

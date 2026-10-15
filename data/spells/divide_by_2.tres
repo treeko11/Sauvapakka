@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SpellDef" format=3]
+
+[ext_resource type="Script" path="res://sim/spell_def.gd" id="1_spell"]
+
+[resource]
+script = ExtResource("1_spell")
+id = &"divide_by_2"
+display_name = "Divide by 2"
+type_label = "Multicast"
+description = "Casts the next spell twice at half damage each."
+kind = 2
+rarity = 1
+mana_cost = 10
+draw = 1
+copies = 2
+damage_mult = 0.5

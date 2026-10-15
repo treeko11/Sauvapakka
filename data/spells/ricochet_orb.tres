@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SpellDef" format=3]
+
+[ext_resource type="Script" path="res://sim/spell_def.gd" id="1_spell"]
+
+[resource]
+script = ExtResource("1_spell")
+id = &"ricochet_orb"
+display_name = "Ricochet Orb"
+type_label = "Projectile"
+description = "Hits twice at lower damage."
+kind = 0
+rarity = 0
+mana_cost = 15
+damage = 3.0
+hits = 2
+travel_time = 0.7

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SpellDef" format=3]
+
+[ext_resource type="Script" path="res://sim/spell_def.gd" id="1_spell"]
+
+[resource]
+script = ExtResource("1_spell")
+id = &"split"
+display_name = "Split"
+type_label = "Modifier"
+description = "The next projectile becomes 3 weaker ones."
+kind = 1
+rarity = 1
+mana_cost = 10
+split_into = 3
+damage_mult = 0.4

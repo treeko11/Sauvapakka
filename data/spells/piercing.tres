@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="SpellDef" format=3]
+
+[ext_resource type="Script" path="res://sim/spell_def.gd" id="1_spell"]
+
+[resource]
+script = ExtResource("1_spell")
+id = &"piercing"
+display_name = "Piercing"
+type_label = "Modifier"
+description = "The next projectile ignores 1 Ward."
+kind = 1
+rarity = 0
+mana_cost = 6
+add_pierce = 1

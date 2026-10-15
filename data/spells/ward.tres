@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SpellDef" format=3]
+
+[ext_resource type="Script" path="res://sim/spell_def.gd" id="1_spell"]
+
+[resource]
+script = ExtResource("1_spell")
+id = &"ward"
+display_name = "Ward"
+type_label = "Defence"
+description = "Blocks the next 2 hits."
+kind = 3
+rarity = 0
+mana_cost = 20
+ward_hits = 2
+cast_delay = 0.1

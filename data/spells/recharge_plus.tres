@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="SpellDef" format=3]
+
+[ext_resource type="Script" path="res://sim/spell_def.gd" id="1_spell"]
+
+[resource]
+script = ExtResource("1_spell")
+id = &"recharge_plus"
+display_name = "Recharge Plus"
+type_label = "Utility"
+description = "Shortens the wand's recharge."
+kind = 4
+rarity = 0
+mana_cost = 5
+recharge = -0.3

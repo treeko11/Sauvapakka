@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SpellDef" format=3]
+
+[ext_resource type="Script" path="res://sim/spell_def.gd" id="1_spell"]
+
+[resource]
+script = ExtResource("1_spell")
+id = &"water_orb"
+display_name = "Water Orb"
+type_label = "Projectile"
+description = "Very low damage; applies Wet."
+kind = 0
+rarity = 0
+mana_cost = 8
+damage = 1.0
+wet = 1
+travel_time = 0.6

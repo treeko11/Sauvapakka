@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="FrameDef" format=3]
+
+[ext_resource type="Script" path="res://sim/frame_def.gd" id="1_frame"]
+
+[resource]
+script = ExtResource("1_frame")
+id = &"twin_fork"
+display_name = "Twin Fork"
+capacity = 6
+spells_per_cast = 2
+cast_delay = 0.35
+recharge_time = 0.8
+mana_max = 120.0
+mana_regen = 35.0
+rule = 1
