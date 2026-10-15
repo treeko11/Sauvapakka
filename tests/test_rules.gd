@@ -339,3 +339,13 @@ func test_escalation_starts_late() -> void:
 	_eq(d._amp(), 1.0, "no amplification before the start")
 	d.tick = roundi(d.fight_seconds * Duel.TICKS_PER_SECOND)
 	_eq(d._amp(), d.amp_at_end, "full amplification at the fight length")
+
+
+func test_summary_records_interactions() -> void:
+	var d := _duel(["ember"])
+	d.casters[1].frozen = true
+	d.arrive_now(d.cast_now(0)[0])
+	var s := DuelSummary.stats(d)
+	_check(s["interactions"].has("steam"), "steam discovered")
+	_eq(s["by_cause"]["steam"], Duel.STEAM_DAMAGE, "steam damage credited")
+	_eq(s["biggest_spell"], &"ember", "biggest hit spell")

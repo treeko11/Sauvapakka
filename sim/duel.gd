@@ -297,11 +297,12 @@ func _launch(s: Shot) -> void:
 		var c := casters[s.source]
 		c.wards += s.ward_hits
 		c.reflects += s.reflect_hits
-		_log("self", s.source, {"uid": s.uid, "spell": s.spell.id, "wards": c.wards, "reflects": c.reflects})
+		_log("self", s.source, {"uid": s.uid, "spell": s.spell.id, "slot": s.slot, "wards": c.wards, "reflects": c.reflects})
 		return
+	s.launch_tick = tick
 	s.arrive_tick = tick + maxi(1, _ticks(s.travel_time))
 	in_flight.append(s)
-	_log("launch", s.source, {"uid": s.uid, "spell": s.spell.id, "mods": s.mod_ids, "arrive": s.arrive_tick})
+	_log("launch", s.source, {"uid": s.uid, "spell": s.spell.id, "slot": s.slot, "mods": s.mod_ids, "arrive": s.arrive_tick})
 
 
 # --- Hits -------------------------------------------------------------------

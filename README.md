@@ -2,9 +2,9 @@
 
 The wand building card game.
 
-Godot 4.7 project containing the deterministic wand-duel simulation and the first
-25 spells as data. There is no rendering yet: duels run on fixed ticks and write an
-event log that a duel screen can replay later.
+Godot 4.7 project containing the deterministic wand-duel simulation, the first
+25 spells as data, and placeholder-art screens. Duels run on fixed ticks and write
+an event log; the duel screen plays the sim back in real time.
 
 ## Layout
 
@@ -17,11 +17,18 @@ event log that a duel screen can replay later.
 | `sim/shot.gd`, `caster.gd`, `wand_state.gd` | Runtime state used by the duel |
 | `sim/spell_db.gd` | Loads every spell in `data/spells` by id |
 | `sim/duel_trace.gd` | Formats events as text |
+| `sim/duel_summary.gd` | Highlights and discovered interactions from a duel's log |
+| `ui/app.gd`, `ui/app.tscn` | Main scene: swaps one screen at a time |
+| `ui/palette.gd`, `ui/ui_kit.gd` | Style-guide colours, placeholder glyphs, shared theme |
+| `ui/duel/` | Duel screen: arena overlay, wand strips, wizard panels |
+| `ui/screens/` | Menu and the other screens |
 | `data/spells/` | The 25 starter spells |
 | `data/frames/` | The six named frames and the Birch Wand, a standard frame that shuffles |
 | `data/builds/` | Sample builds, one or more per archetype |
 | `tools/run_duel.gd` | Headless runner |
 | `tests/test_rules.gd` | Rule tests |
+| `tests/test_ui.gd` | Screen smoke tests (headless) |
+| `tools/screenshot.gd` | Saves a PNG of a screen |
 
 ## Running
 
@@ -33,6 +40,14 @@ godot --headless --path . --import
 
 ```bash
 godot --headless --path . --script res://tests/test_rules.gd
+```
+
+```bash
+godot --headless --path . --script res://tests/test_ui.gd
+```
+
+```bash
+godot --path .
 ```
 
 ```bash
@@ -48,6 +63,12 @@ The runner also takes `--seed N` and `--boss` (a 60-second fight). `--dps` runs 
 Matrix cells show the win rate, then the row build's HP% minus the column build's HP% at the end. Duels are deterministic apart from shuffled frames, so the margin shows a close matchup better than the win rate does. Under the matrix, a table lists each build's overall win rate, average fight length, damage dealt and taken per duel, and how its damage splits between hits, Burn and Steam.
 
 The balance gate is every build winning 30–70% of its duels with fights averaging 25–35 s. The Starter build is meant to be outgrown and sits below the band.
+
+## Duel screen
+
+The enemy is at the top and the player at the bottom, each with their wand strip on the outer edge. The pointer under a strip marks the next slot to draw; drawn spells lift and glow, skipped ones flash red (no mana) or plum (silenced), and a bar shows recharge. Projectiles take the colour of their element, grow with damage, carry violet dots for each modifier and an inner dot for a payload, and get a silver ring once reflected. Pause, then tap a projectile to see what it is carrying. The renderer is GL Compatibility so the same project exports to web.
+
+Screenshots without a device: `xvfb-run godot --path . --resolution 720x1280 --fixed-fps 30 --script res://tools/screenshot.gd -- duel burn turtle 8 out.png` (add `inspect` or `end`).
 
 ## Rules the scope left open (current interpretation)
 
