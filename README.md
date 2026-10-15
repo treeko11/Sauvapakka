@@ -1,4 +1,5 @@
 # Sauvapakka — headless simulation prototype
+nThe wand building card game.
 
 Godot 4.7 project containing the deterministic wand-duel simulation and the first
 25 spells as data. There is no rendering yet: duels run on fixed ticks and write an
