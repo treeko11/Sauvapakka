@@ -30,10 +30,12 @@ const FROZEN_SECONDS := 0.7
 const SHOCK_BONUS_PER_STACK := 5.0
 const STEAM_DAMAGE := 12.0
 const CHAIN_DAMAGE_MULT := 0.5
+## Damage amplification starts at this fraction of fight_seconds.
+const ESCALATION_START := 0.6
 
 enum { RUNNING = -2, DRAW = -1 }
 
-## Damage amplification starts halfway through and reaches amp_at_end here.
+## Damage amplification reaches amp_at_end here.
 var fight_seconds := 30.0
 ## If nobody has died by now, the higher HP fraction wins.
 var hard_cap_seconds := 60.0
@@ -491,7 +493,7 @@ func _check_end() -> void:
 
 
 func _amp() -> float:
-	var start := fight_seconds * 0.5
+	var start := fight_seconds * ESCALATION_START
 	var t := seconds()
 	if t <= start:
 		return 1.0

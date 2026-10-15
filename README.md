@@ -18,7 +18,7 @@ event log that a duel screen can replay later.
 | `sim/spell_db.gd` | Loads every spell in `data/spells` by id |
 | `sim/duel_trace.gd` | Formats events as text |
 | `data/spells/` | The 25 starter spells |
-| `data/frames/` | The six named frames |
+| `data/frames/` | The six named frames and the Birch Wand, a standard frame that shuffles |
 | `data/builds/` | Sample builds, one or more per archetype |
 | `tools/run_duel.gd` | Headless runner |
 | `tests/test_rules.gd` | Rule tests |
@@ -45,7 +45,9 @@ godot --headless --path . --script res://tools/run_duel.gd -- --matrix --seeds 3
 
 The runner also takes `--seed N` and `--boss` (a 60-second fight). `--dps` runs each build against an empty wand with bottomless HP and no escalation, and reports raw damage output and mana starvation.
 
-Matrix cells show the win rate, then the row build's HP% minus the column build's HP% at the end. Duels are deterministic apart from shuffled frames, so the margin shows a close matchup better than the win rate does.
+Matrix cells show the win rate, then the row build's HP% minus the column build's HP% at the end. Duels are deterministic apart from shuffled frames, so the margin shows a close matchup better than the win rate does. Under the matrix, a table lists each build's overall win rate, average fight length, damage dealt and taken per duel, and how its damage splits between hits, Burn and Steam.
+
+The balance gate is every build winning 30–70% of its duels with fights averaging 25–35 s. The Starter build is meant to be outgrown and sits below the band.
 
 ## Rules the scope left open (current interpretation)
 
@@ -63,6 +65,6 @@ Matrix cells show the win rate, then the row build's HP% minus the column build'
 - **Ember Staff:** adds +1 Burn stack to every Burn it applies.
 - **Freeze:** a frozen caster skips its next cast and waits at least 0.7 s before the one after.
 - **Glacier Wand:** its Chill stops decaying until the target freezes.
-- **Escalation:** damage amplification starts halfway through the fight and reaches ×3 at the fight length (30 s, or 60 s for the boss). If nobody has died by twice the fight length, the higher HP fraction wins.
+- **Escalation:** damage amplification starts at 60% of the fight length and reaches ×3 at the fight length (30 s, or 60 s for the boss). If nobody has died by twice the fight length, the higher HP fraction wins.
 
-The tuning numbers are constants at the top of `sim/duel.gd`, caster HP (250) in `sim/caster.gd`, and fields on the `.tres` files.
+The tuning numbers are constants at the top of `sim/duel.gd`, caster HP (320) in `sim/caster.gd`, and fields on the `.tres` files.

@@ -51,6 +51,9 @@ func _matrix(db: SpellDB, seeds: int, boss: bool) -> void:
 	var total_seconds := 0.0
 	var duels := 0
 	var timeouts := 0
+	var stats: Array[Dictionary] = []
+	for n in names:
+		stats.append({"duels": 0, "seconds": 0.0, "won": 0.0, "taken": 0.0, "dealt": {"hit": 0.0, "burn": 0.0, "steam": 0.0}})
 	for i in builds.size():
 		var line := "%-*s" % [width, names[i].left(width - 1)]
 		var won := 0.0
@@ -74,12 +77,53 @@ func _matrix(db: SpellDB, seeds: int, boss: bool) -> void:
 					wins += 0.5
 				var c := d.casters
 				margin += 100.0 * (maxf(0.0, c[0].hp) / c[0].max_hp - maxf(0.0, c[1].hp) / c[1].max_hp)
+				_tally(d, stats[i], stats[j])
 			won += wins / seeds
+			stats[i]["won"] += wins
+			stats[j]["won"] += seeds - wins
 			line += "%*s" % [width, "%d%% %+d" % [roundi(100.0 * wins / seeds), roundi(margin / seeds)]]
 		print(line + "%*s" % [width, "%.1f" % won])
-	print("
-%d duels, average length %.1fs, %d decided by HP at the cap" % [duels, total_seconds / duels, timeouts])
-	print("Cells: win rate, then row's HP% minus column's HP% at the end.")
+	print("\n%d duels, average length %.1fs, %d decided by HP at the cap" % [duels, total_seconds / duels, timeouts])
+	print("Cells: win rate, then row's HP% minus column's HP% at the end.\n")
+	_print_build_stats(names, stats)
+
+
+## Adds one duel to both builds' totals. Damage is credited to the side that
+## didn't take it, so reflected hits count for the reflector.
+func _tally(d: Duel, a: Dictionary, b: Dictionary) -> void:
+	var sides: Array[Dictionary] = [a, b]
+	for side in sides:
+		side["duels"] += 1
+		side["seconds"] += d.seconds()
+	for e in d.events:
+		if e["type"] != "damage":
+			continue
+		var cause: String = e["cause"]
+		sides[e["who"]]["taken"] += e["amount"]
+		sides[1 - e["who"]]["dealt"][cause] = sides[1 - e["who"]]["dealt"].get(cause, 0.0) + e["amount"]
+
+
+func _print_build_stats(names: PackedStringArray, stats: Array[Dictionary]) -> void:
+	print("%-15s%8s%8s%8s%8s%8s%8s%8s" % ["build", "win %", "length", "dealt", "taken", "hit %", "burn %", "steam %"])
+	var in_band := 0
+	for i in names.size():
+		var s := stats[i]
+		var n: int = s["duels"]
+		var dealt: Dictionary = s["dealt"]
+		var total := 0.0
+		for v in dealt.values():
+			total += v
+		var win_rate: float = 100.0 * s["won"] / n
+		if win_rate >= 30.0 and win_rate <= 70.0:
+			in_band += 1
+		print("%-15s%7.0f%%%7.1fs%8.0f%8.0f%7.0f%%%7.0f%%%7.0f%%" % [names[i].left(14), win_rate,
+			s["seconds"] / n, total / n, s["taken"] / n,
+			_pct(dealt["hit"], total), _pct(dealt["burn"], total), _pct(dealt["steam"], total)])
+	print("\n%d of %d builds win 30-70%% of their duels. Dealt and taken are per duel." % [in_band, names.size()])
+
+
+func _pct(part: float, whole: float) -> float:
+	return 0.0 if whole <= 0.0 else 100.0 * part / whole
 
 
 ## Each build against an empty wand with bottomless HP and no escalation, so the

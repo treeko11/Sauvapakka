@@ -4,7 +4,7 @@ extends RefCounted
 
 var index := 0
 var name := ""
-var max_hp := 250.0
+var max_hp := 320.0
 var hp := max_hp
 
 var burn := 0
