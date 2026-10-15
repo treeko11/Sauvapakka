@@ -4,6 +4,7 @@ extends Control
 
 var db: SpellDB
 var current: Control
+var flow: RunFlow
 
 
 func _ready() -> void:
@@ -22,3 +23,8 @@ func show_screen(screen: Control) -> void:
 
 func show_menu() -> void:
 	show_screen(MainMenu.new(self))
+
+
+func new_run(p_seed := -1) -> void:
+	flow = RunFlow.new(self, p_seed if p_seed >= 0 else randi())
+	flow.show_preview()

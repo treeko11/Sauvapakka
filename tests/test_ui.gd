@@ -101,3 +101,49 @@ func test_app_menu_and_viewer() -> void:
 	await process_frame
 	_check(app.current is DuelScreen, "viewer opens a duel")
 	app.queue_free()
+
+
+## Plays a whole run through the real screens, always taking the first wand.
+func test_full_run_through_screens() -> void:
+	var app := (load("res://ui/app.tscn") as PackedScene).instantiate() as App
+	root.add_child(app)
+	await process_frame
+	app.new_run(7)
+	await process_frame
+	_check(app.current is PreviewScreen, "run opens on the preview")
+	var flow := app.flow
+	var guard := 0
+	while flow.run.phase != RunState.Phase.WON and flow.run.phase != RunState.Phase.LOST and guard < 20:
+		guard += 1
+		flow.start_workshop()
+		await process_frame
+		_check(app.current is Workshop, "workshop shown")
+		var ws := app.current as Workshop
+		ws._apply({"from": "hand", "i": 0}, {"to": "slot", "w": 1, "s": 0})
+		await process_frame
+		flow.show_book()
+		await process_frame
+		_check(app.current is SpellBookScreen, "spell book shown")
+		flow.show_choose()
+		await process_frame
+		_check(app.current is ChooseScreen, "choose shown")
+		flow.fight(0)
+		await process_frame
+		var duel_screen := app.current as DuelScreen
+		_run_to_end(duel_screen)
+		# Force wins so every screen in the ladder gets visited.
+		duel_screen.duel.winner = 0
+		duel_screen.finished.emit(0)
+		await process_frame
+		if app.current is RewardScreen:
+			var rs := app.current as RewardScreen
+			rs._on_pick(null, flow.run.reward_options[0])
+			rs._on_frame(-1 if flow.run.frame_drop != null else -2)
+			rs._confirm()
+			await process_frame
+			_check(app.current is PreviewScreen, "next preview after rewards")
+	_check(app.current is RunEndScreen, "run ends on the end screen")
+	_check(flow.run.phase == RunState.Phase.WON, "boss beaten")
+	_check(flow.run.wands.size() == RunState.MAX_WANDS, "frame drops added wands")
+	_check(flow.run.results.size() >= 1, "results recorded")
+	app.queue_free()

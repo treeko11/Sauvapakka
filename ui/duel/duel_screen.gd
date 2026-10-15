@@ -12,6 +12,7 @@ var duel: Duel
 var db: SpellDB
 var dummy := false
 var continue_text := "Continue"
+var enemy_robe := Palette.ENEMY_ROBE
 
 var _speed := 1.0
 var _paused := false
@@ -22,6 +23,7 @@ var _ended := false
 var _builds: Array[WandBuild] = []
 var _seed := 0
 var _boss := false
+var _factory := Callable()
 
 var _strips: Array[WandStrip] = []
 var _wizards: Array[WizardPanel] = []
@@ -45,6 +47,13 @@ func setup(player: WandBuild, enemy: WandBuild, p_db: SpellDB, p_seed := 0, boss
 	dummy = p_dummy
 
 
+## Call before adding to the tree. `factory` returns a fresh Duel, so the run
+## can set enemy HP and Watch again replays the same seed.
+func setup_factory(factory: Callable, p_db: SpellDB) -> void:
+	_factory = factory
+	db = p_db
+
+
 func _ready() -> void:
 	theme = UiKit.theme()
 	set_anchors_and_offsets_preset(PRESET_FULL_RECT)
@@ -60,7 +69,7 @@ func _ready() -> void:
 		var wiz := WizardPanel.new()
 		wiz.caster_index = i
 		wiz.facing = 1.0 if i == 0 else -1.0
-		wiz.robe = Palette.PLAYER_ROBE if i == 0 else Palette.ENEMY_ROBE
+		wiz.robe = Palette.PLAYER_ROBE if i == 0 else enemy_robe
 		wiz.position = Vector2(0, 790) if i == 0 else Vector2(0, 210)
 		wiz.size = Vector2(720, 270)
 		wiz.mouse_filter = MOUSE_FILTER_IGNORE
@@ -123,8 +132,7 @@ func _build_inspect_panel() -> void:
 
 
 func _restart() -> void:
-	var enemy := _builds[1]
-	duel = Duel.new(_builds[0], enemy, db, _seed, _boss)
+	duel = _factory.call() if _factory.is_valid() else Duel.new(_builds[0], _builds[1], db, _seed, _boss)
 	if dummy:
 		duel.amp_at_end = 1.0
 		duel.hard_cap_seconds = 30.0

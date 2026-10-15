@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyDef" format=3]
+
+[ext_resource type="Script" path="res://game/enemy_def.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = &"frost_warden"
+display_name = "Frost Warden"
+themed = true
+traits = PackedStringArray("Chills", "Slow")
+counter = "Burn, Quick Cast"
+spell_pool = PackedStringArray("frost_shard", "frost_shard", "frost_shard", "add_chill", "add_chill", "water_orb", "ward")
+frames = PackedStringArray("glacier_wand")
+min_depth = 0
+max_depth = 9
+robe = Color(0.561, 0.890, 0.961, 1)

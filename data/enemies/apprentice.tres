@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyDef" format=3]
+
+[ext_resource type="Script" path="res://game/enemy_def.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = &"apprentice"
+display_name = "Apprentice"
+themed = false
+traits = PackedStringArray()
+counter = ""
+spell_pool = PackedStringArray("flicker", "flicker", "ember", "frost_shard", "water_orb", "damage_plus", "ward")
+frames = PackedStringArray()
+min_depth = 0
+max_depth = 1
+robe = Color(0.549, 0.549, 0.549, 1)

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyDef" format=3]
+
+[ext_resource type="Script" path="res://game/enemy_def.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = &"duelist"
+display_name = "Duelist"
+themed = false
+traits = PackedStringArray()
+counter = ""
+spell_pool = PackedStringArray("flicker", "ember", "frost_shard", "arc", "add_burn", "add_chill", "ward", "piercing", "quick_cast", "double_spell", "mana_spring", "ricochet_orb")
+frames = PackedStringArray()
+min_depth = 1
+max_depth = 4
+robe = Color(0.290, 0.290, 0.322, 1)

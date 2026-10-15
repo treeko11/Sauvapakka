@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="WandBuild" format=3]
+
+[ext_resource type="Script" path="res://sim/wand_build.gd" id="1_build"]
+[ext_resource type="Resource" path="res://data/frames/archmage_staff.tres" id="2_frame"]
+
+[resource]
+script = ExtResource("1_build")
+display_name = "Archmage"
+frame = ExtResource("2_frame")
+spell_ids = PackedStringArray("ward", "add_burn", "ember", "double_spell", "frost_shard", "ember", "damage_plus", "magic_missile")

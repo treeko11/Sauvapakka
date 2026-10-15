@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyDef" format=3]
+
+[ext_resource type="Script" path="res://game/enemy_def.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = &"leech"
+display_name = "Leech"
+themed = true
+traits = PackedStringArray("Drains mana")
+counter = "Mana-free spells, Leyline Rod"
+spell_pool = PackedStringArray("mana_leech", "mana_leech", "mana_leech", "silence", "flicker", "magic_missile", "damage_plus")
+frames = PackedStringArray()
+min_depth = 0
+max_depth = 9
+robe = Color(0.761, 0.271, 0.494, 1)

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyDef" format=3]
+
+[ext_resource type="Script" path="res://game/enemy_def.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = &"pyromancer"
+display_name = "Pyromancer"
+themed = true
+traits = PackedStringArray("Burns", "Fast")
+counter = "Wet, Ward"
+spell_pool = PackedStringArray("ember", "ember", "ember", "add_burn", "flicker", "flicker", "double_spell", "damage_plus")
+frames = PackedStringArray("ember_staff")
+min_depth = 0
+max_depth = 9
+robe = Color(0.949, 0.400, 0.169, 1)

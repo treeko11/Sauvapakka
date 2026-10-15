@@ -5,6 +5,10 @@ extends SceneTree
 ##     godot --headless --script res://tools/run_duel.gd -- burn turtle --trace
 ##   Every build against every other, over several seeds:
 ##     godot --headless --script res://tools/run_duel.gd -- --matrix --seeds 5
+##   Each themed archetype against its counter build and the sample builds:
+##     godot --headless --script res://tools/run_duel.gd -- --archetypes --depth 3 --seeds 10
+##   Each sample build against the Archmage:
+##     godot --headless --script res://tools/run_duel.gd -- --archmage --seeds 5
 ##
 ## Other flags: --seed N, --boss (60-second fight).
 
@@ -18,6 +22,10 @@ func _initialize() -> void:
 	var boss := "--boss" in args
 	if "--matrix" in args:
 		_matrix(db, int(_flag_value(args, "--seeds", "3")), boss)
+	elif "--archetypes" in args:
+		_archetypes(db, int(_flag_value(args, "--depth", "3")), int(_flag_value(args, "--seeds", "10")))
+	elif "--archmage" in args:
+		_archmage(db, int(_flag_value(args, "--seeds", "5")))
 	elif "--dps" in args:
 		_dps(db, p_seed)
 	else:
@@ -157,6 +165,66 @@ func _dps(db: SpellDB, p_seed: int) -> void:
 		print("%-15s%8s%8.0f%8.0f%8.0f%8.0f%8.1f%8d" % [n.left(14),
 			"never" if to_100 < 0.0 else "%.1fs" % to_100, total,
 			by_cause["hit"], by_cause["burn"], by_cause["steam"], total / 30.0, no_mana])
+
+
+## The Milestone 4 gate: each themed archetype should lose to its listed counter
+## more often than not. Sample builds give a baseline for comparison.
+func _archetypes(db: SpellDB, depth: int, seeds: int) -> void:
+	var samples: Array[WandBuild] = []
+	for n in _build_names():
+		samples.append(_load_build(n))
+	print("Depth %d, %d generated wands per archetype. Win rates are the player's.\n" % [depth, seeds])
+	print("%-14s%-28s%10s%10s%8s" % ["archetype", "counter", "counter", "samples", "length"])
+	var passed := 0
+	var themed := 0
+	for f in DirAccess.get_files_at(RunState.ENEMY_DIR):
+		var def := load(RunState.ENEMY_DIR.path_join(f.trim_suffix(".remap"))) as EnemyDef
+		if def.min_depth > depth or def.max_depth < depth:
+			continue
+		var counter_path := "%s/counters/%s.tres" % [BUILD_DIR, def.id]
+		var counter := load(counter_path) as WandBuild if ResourceLoader.exists(counter_path) else null
+		if def.themed:
+			themed += 1
+		var counter_wins := 0.0
+		var sample_wins := 0.0
+		var secs := 0.0
+		var rng := RandomNumberGenerator.new()
+		for s in seeds:
+			rng.seed = hash([def.id, depth, s])
+			var enemy := EnemyGen.generate(def, depth, rng, db)
+			if counter != null:
+				counter_wins += _score(Duel.new(counter, enemy, db, s).run())
+			for b in samples:
+				var d := Duel.new(b, enemy, db, s)
+				sample_wins += _score(d.run())
+				secs += d.seconds()
+		var rate := counter_wins / seeds
+		if counter != null and rate > 0.5:
+			passed += 1
+		print("%-14s%-28s%10s%9.0f%%%7.1fs" % [def.id.left(13), counter.display_name.left(27) if counter else "(generic)",
+			"%.0f%%" % (100.0 * rate) if counter else "-", 100.0 * sample_wins / (seeds * samples.size()), secs / (seeds * samples.size())])
+	print("\n%d of %d archetypes lose to their counter more often than not." % [passed, themed])
+
+
+func _archmage(db: SpellDB, seeds: int) -> void:
+	var boss := load(RunState.BOSS_PATH) as EnemyDef
+	print("%-15s%8s%9s%9s" % ["build", "win %", "length", "boss HP"])
+	for n in _build_names():
+		var wins := 0.0
+		var secs := 0.0
+		var boss_hp := 0.0
+		for s in seeds:
+			var d := Duel.new(_load_build(n), boss.fixed_build, db, s, true)
+			d.casters[1].max_hp = boss.max_hp
+			d.casters[1].hp = boss.max_hp
+			wins += _score(d.run())
+			secs += d.seconds()
+			boss_hp += maxf(0.0, d.casters[1].hp) / boss.max_hp
+		print("%-15s%7.0f%%%8.1fs%8.0f%%" % [n.left(14), 100.0 * wins / seeds, secs / seeds, 100.0 * boss_hp / seeds])
+
+
+func _score(winner: int) -> float:
+	return 1.0 if winner == 0 else (0.5 if winner == Duel.DRAW else 0.0)
 
 
 func _print_result(d: Duel) -> void:

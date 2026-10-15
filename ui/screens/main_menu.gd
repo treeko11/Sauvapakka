@@ -23,4 +23,5 @@ func _ready() -> void:
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(sub)
 	box.add_child(Control.new())
+	box.add_child(UiKit.button("New run", app.new_run, Vector2(0, 80)))
 	box.add_child(UiKit.button("Duel viewer", func() -> void: app.show_screen(DuelViewer.new(app)), Vector2(0, 80)))

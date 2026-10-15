@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyDef" format=3]
+
+[ext_resource type="Script" path="res://game/enemy_def.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = &"battlemage"
+display_name = "Battlemage"
+themed = false
+traits = PackedStringArray()
+counter = ""
+spell_pool = PackedStringArray("flicker", "ember", "frost_shard", "water_orb", "arc", "magic_missile", "ricochet_orb", "add_burn", "add_chill", "damage_plus", "overcharge", "double_spell", "triple_spell", "ward", "reflect_ward", "mana_spring", "recharge_plus")
+frames = PackedStringArray()
+min_depth = 3
+max_depth = 9
+robe = Color(0.361, 0.373, 0.431, 1)
