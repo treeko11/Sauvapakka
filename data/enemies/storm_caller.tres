@@ -11,6 +11,7 @@ traits = PackedStringArray("Shocks", "Burst damage")
 counter = "Ward, Silence"
 spell_pool = PackedStringArray("arc", "arc", "arc", "water_orb", "flicker", "magic_missile", "mana_spring")
 frames = PackedStringArray()
+max_hp = 260.0
 min_depth = 0
 max_depth = 9
 robe = Color(0.961, 0.839, 0.231, 1)

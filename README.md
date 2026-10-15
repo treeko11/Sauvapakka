@@ -94,7 +94,8 @@ Screenshots without a device: `xvfb-run godot --path . --resolution 720x1280 --f
 - **Hand:** five spells, pinned ones first. Slotted spells stay in their wands and out of the pool; the hand goes back to the pool after each fight.
 - **Rewards:** pick 1 of 3 (or skip), rarer deeper in; the enemy drops one spell from its wand; a stats-only frame drops after fights 2 and 4, taken as a new wand (up to 3) or replacing a frame.
 - **Enemy wands:** 3 + depth slots (4 + depth for themed), spells capped at Common for depth 0-1, Uncommon for 2-3 and Rare after. From depth 2 spells are ordered so modifiers, multicasts and triggers feed projectiles; themed enemies use their named frame from depth 3.
-- **Archmage:** 640 HP, a 60-second escalating fight, a fixed eight-slot wand.
+- **Enemy HP:** set per archetype by `tools/tune.gd -- --enemy-hp`, which fits each one so the sample builds win 80% at depth 0 falling to 50% at depth 4 (Bulwark 180 up to Battlemage 560).
+- **Archmage:** 410 HP, a 60-second escalating fight, a fixed eight-slot wand of Wards, Burn and one Magic Missile. About a third of the sample builds beat it.
 
 ## Rules the scope left open (current interpretation)
 

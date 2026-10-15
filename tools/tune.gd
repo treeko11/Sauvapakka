@@ -129,7 +129,11 @@ func _fit_enemy_hp() -> void:
 	for f in DirAccess.get_files_at(RunState.ENEMY_DIR):
 		defs.append(load(RunState.ENEMY_DIR.path_join(f.trim_suffix(".remap"))))
 	defs.append(load(RunState.BOSS_PATH))
+	var args := OS.get_cmdline_user_args()
+	var only := args[args.find("--only") + 1].split(",") if "--only" in args else PackedStringArray()
 	for def in defs:
+		if not only.is_empty() and not only.has(String(def.id)):
+			continue
 		var depths := _depths_for(def)
 		var target := 0.0
 		for dpt in depths:

@@ -7,4 +7,4 @@
 script = ExtResource("1_build")
 display_name = "Mana-free Leyline"
 frame = ExtResource("2_frame")
-spell_ids = PackedStringArray("magic_missile", "flicker", "mana_spring", "ember", "flicker", "damage_plus", "flicker", "frost_shard")
+spell_ids = PackedStringArray("magic_missile", "mana_spring", "flicker", "ember", "flicker", "mana_spring", "flicker", "damage_plus")

@@ -10,6 +10,6 @@ display_name = "Archmage"
 themed = true
 traits = PackedStringArray("Escalating", "Shielded", "Burns")
 counter = "Sustained damage for a full minute"
-max_hp = 640.0
+max_hp = 410.0
 robe = Color(0.725, 0.549, 1, 1)
 fixed_build = ExtResource("2_build")

@@ -11,6 +11,7 @@ traits = PackedStringArray("Chills", "Slow")
 counter = "Burn, Quick Cast"
 spell_pool = PackedStringArray("frost_shard", "frost_shard", "frost_shard", "add_chill", "add_chill", "water_orb", "ward")
 frames = PackedStringArray("glacier_wand")
+max_hp = 320.0
 min_depth = 0
 max_depth = 9
 robe = Color(0.561, 0.890, 0.961, 1)

@@ -11,6 +11,7 @@ traits = PackedStringArray("Silences")
 counter = "Long wands, redundancy"
 spell_pool = PackedStringArray("silence", "silence", "mana_leech", "flicker", "flicker", "ember", "frost_shard", "damage_plus")
 frames = PackedStringArray()
+max_hp = 340.0
 min_depth = 0
 max_depth = 9
 robe = Color(0.431, 0.165, 0.310, 1)

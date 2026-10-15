@@ -11,6 +11,7 @@ traits = PackedStringArray()
 counter = ""
 spell_pool = PackedStringArray("flicker", "ember", "frost_shard", "water_orb", "arc", "magic_missile", "ricochet_orb", "add_burn", "add_chill", "damage_plus", "overcharge", "double_spell", "triple_spell", "ward", "reflect_ward", "mana_spring", "recharge_plus")
 frames = PackedStringArray()
+max_hp = 560.0
 min_depth = 3
 max_depth = 9
 robe = Color(0.361, 0.373, 0.431, 1)

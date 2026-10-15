@@ -11,6 +11,7 @@ traits = PackedStringArray("Multicast spam")
 counter = "Reflect Ward, sturdy single target"
 spell_pool = PackedStringArray("double_spell", "triple_spell", "flicker", "flicker", "flicker", "damage_plus", "ember")
 frames = PackedStringArray("twin_fork")
+max_hp = 240.0
 min_depth = 0
 max_depth = 9
 robe = Color(0.247, 0.639, 0.478, 1)

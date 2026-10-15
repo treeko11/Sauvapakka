@@ -7,4 +7,4 @@
 script = ExtResource("1_build")
 display_name = "Archmage"
 frame = ExtResource("2_frame")
-spell_ids = PackedStringArray("ward", "add_burn", "ember", "double_spell", "frost_shard", "ember", "damage_plus", "magic_missile")
+spell_ids = PackedStringArray("ward", "add_burn", "ember", "frost_shard", "flicker", "ward", "ember", "magic_missile")

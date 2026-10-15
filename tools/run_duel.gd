@@ -14,10 +14,13 @@ extends SceneTree
 
 const BUILD_DIR := "res://data/builds"
 
+var _db: SpellDB
+
 
 func _initialize() -> void:
 	var args := OS.get_cmdline_user_args()
 	var db := SpellDB.load_default()
+	_db = db
 	var p_seed := int(_flag_value(args, "--seed", "0"))
 	var boss := "--boss" in args
 	if "--matrix" in args:
@@ -193,9 +196,9 @@ func _archetypes(db: SpellDB, depth: int, seeds: int) -> void:
 			rng.seed = hash([def.id, depth, s])
 			var enemy := EnemyGen.generate(def, depth, rng, db)
 			if counter != null:
-				counter_wins += _score(Duel.new(counter, enemy, db, s).run())
+				counter_wins += _score(_enemy_duel(counter, enemy, def, s).run())
 			for b in samples:
-				var d := Duel.new(b, enemy, db, s)
+				var d := _enemy_duel(b, enemy, def, s)
 				sample_wins += _score(d.run())
 				secs += d.seconds()
 		var rate := counter_wins / seeds
@@ -204,6 +207,13 @@ func _archetypes(db: SpellDB, depth: int, seeds: int) -> void:
 		print("%-14s%-28s%10s%9.0f%%%7.1fs" % [def.id.left(13), counter.display_name.left(27) if counter else "(generic)",
 			"%.0f%%" % (100.0 * rate) if counter else "-", 100.0 * sample_wins / (seeds * samples.size()), secs / (seeds * samples.size())])
 	print("\n%d of %d archetypes lose to their counter more often than not." % [passed, themed])
+
+
+func _enemy_duel(player: WandBuild, enemy: WandBuild, def: EnemyDef, p_seed: int) -> Duel:
+	var d := Duel.new(player, enemy, SpellDB.load_default() if _db == null else _db, p_seed)
+	d.casters[1].max_hp = def.max_hp
+	d.casters[1].hp = def.max_hp
+	return d
 
 
 func _archmage(db: SpellDB, seeds: int) -> void:
