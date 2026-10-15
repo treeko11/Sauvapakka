@@ -5,12 +5,15 @@ extends Control
 var db: SpellDB
 var current: Control
 var flow: RunFlow
+var profile: Profile
 
 
 func _ready() -> void:
 	theme = UiKit.theme()
 	set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 	db = SpellDB.load_default()
+	if profile == null:
+		profile = Profile.load_or_new()
 	show_menu()
 
 

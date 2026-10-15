@@ -25,6 +25,17 @@ func _check(ok: bool, what: String) -> void:
 		printerr("FAIL %s: %s" % [_current, what])
 
 
+const TEST_PROFILE := "user://test_ui_profile.json"
+
+
+## The app with a throwaway profile, so tests never touch a real save.
+func _app() -> App:
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PROFILE))
+	var app := (load("res://ui/app.tscn") as PackedScene).instantiate() as App
+	app.profile = Profile.load_or_new(TEST_PROFILE)
+	return app
+
+
 func _build(name: String) -> WandBuild:
 	return load("res://data/builds/%s.tres" % name)
 
@@ -91,7 +102,7 @@ func test_training_dummy() -> void:
 
 
 func test_app_menu_and_viewer() -> void:
-	var app := (load("res://ui/app.tscn") as PackedScene).instantiate() as App
+	var app := _app()
 	root.add_child(app)
 	await process_frame
 	_check(app.current is MainMenu, "starts on the menu")
@@ -105,7 +116,7 @@ func test_app_menu_and_viewer() -> void:
 
 ## Plays a whole run through the real screens, always taking the first wand.
 func test_full_run_through_screens() -> void:
-	var app := (load("res://ui/app.tscn") as PackedScene).instantiate() as App
+	var app := _app()
 	root.add_child(app)
 	await process_frame
 	app.new_run(7)
@@ -145,5 +156,11 @@ func test_full_run_through_screens() -> void:
 	_check(app.current is RunEndScreen, "run ends on the end screen")
 	_check(flow.run.phase == RunState.Phase.WON, "boss beaten")
 	_check(flow.run.wands.size() == RunState.MAX_WANDS, "frame drops added wands")
+	var saved := Profile.load_or_new(TEST_PROFILE)
+	_check(saved.runs == 1 and saved.wins == 1 and saved.best_fight == 7, "run saved to the profile")
+	_check(saved.spells_found.size() >= RunState.STARTER_LIBRARY.size(), "found spells saved")
+	app.show_screen(CompendiumScreen.new(app))
+	await process_frame
+	_check(app.current is CompendiumScreen, "compendium opens")
 	_check(flow.run.results.size() >= 1, "results recorded")
 	app.queue_free()

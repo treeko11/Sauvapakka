@@ -13,6 +13,8 @@ var db: SpellDB
 var dummy := false
 var continue_text := "Continue"
 var enemy_robe := Palette.ENEMY_ROBE
+## When set, the speed setting is read from and saved to it.
+var profile: Profile
 
 var _speed := 1.0
 var _paused := false
@@ -117,7 +119,7 @@ func _build_speed_bar() -> void:
 		b.size_flags_horizontal = SIZE_EXPAND_FILL
 		row.add_child(b)
 		_speed_buttons.append(b)
-	_set_speed(1.0)
+	_set_speed(float(profile.settings.get("duel_speed", 1.0)) if profile else 1.0, false)
 
 
 func _build_inspect_panel() -> void:
@@ -156,8 +158,11 @@ func _restart() -> void:
 	_set_paused(false)
 
 
-func _set_speed(s: float) -> void:
+func _set_speed(s: float, remember := true) -> void:
 	_speed = s
+	if profile != null and remember and profile.settings.get("duel_speed") != s:
+		profile.settings["duel_speed"] = s
+		profile.save()
 	for i in _speed_buttons.size():
 		_speed_buttons[i].set_pressed_no_signal(SPEEDS[i] == s)
 

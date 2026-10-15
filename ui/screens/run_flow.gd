@@ -38,6 +38,7 @@ func test_wand(wand_i: int) -> void:
 	dummy.display_name = "Training Dummy"
 	dummy.frame = load(RunState.STARTER_FRAME)
 	var screen := DuelScreen.new()
+	screen.profile = app.profile
 	screen.setup(run.wands[wand_i], dummy, app.db, 0, false, true)
 	screen.continue_text = "Back to workshop"
 	screen.finished.connect(func(_w: int) -> void: show_workshop())
@@ -46,6 +47,7 @@ func test_wand(wand_i: int) -> void:
 
 func fight(wand_i: int) -> void:
 	var screen := DuelScreen.new()
+	screen.profile = app.profile
 	screen.setup_factory(run.make_duel.bind(wand_i), app.db)
 	screen.enemy_robe = run.current_fight()["def"].robe
 	screen.finished.connect(func(_w: int) -> void: _after_fight(screen.duel))
@@ -54,6 +56,7 @@ func fight(wand_i: int) -> void:
 
 func _after_fight(d: Duel) -> void:
 	run.finish_fight(d)
+	app.profile.record_run(run, run.phase == RunState.Phase.WON or run.phase == RunState.Phase.LOST)
 	match run.phase:
 		RunState.Phase.REWARD:
 			app.show_screen(RewardScreen.new(self))

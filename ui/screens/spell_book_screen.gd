@@ -72,7 +72,9 @@ func _row(sid: String, count: int, where: String) -> Control:
 	var sp := run.db.get_spell(sid)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 8)
-	row.add_child(SlotView.new(sp, 56))
+	var icon := SlotView.new(sp, 56)
+	icon.mouse_filter = MOUSE_FILTER_PASS
+	row.add_child(icon)
 	var name := UiKit.label("%s%s\n%s" % [sp.display_name, " ×%d" % count if count > 1 else "", sp.description], 17, Palette.PARCHMENT)
 	name.custom_minimum_size = Vector2(300, 0)
 	name.size_flags_horizontal = SIZE_EXPAND_FILL

@@ -200,3 +200,28 @@ func test_loss_ends_run_and_boss_win_ends_it() -> void:
 	d2.winner = 0
 	r2.finish_fight(d2)
 	_eq(r2.phase, RunState.Phase.WON, "boss win ends the run")
+
+
+func test_profile_round_trip() -> void:
+	var path := "user://test_run_profile.json"
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+	var p := Profile.load_or_new(path)
+	_eq(p.runs, 0, "fresh profile")
+	var r := _run(9)
+	r.discoveries["steam"] = true
+	r.fight_index = 3
+	r.phase = RunState.Phase.LOST
+	p.settings["duel_speed"] = 2.0
+	p.record_run(r, true)
+	var q := Profile.load_or_new(path)
+	_eq(q.runs, 1, "run counted")
+	_eq(q.wins, 0, "loss isn't a win")
+	_eq(q.best_fight, 4, "furthest fight")
+	_check(q.interactions.has("steam"), "interaction saved")
+	_check(q.spells_found.has("ember"), "spells saved")
+	_eq(q.settings["duel_speed"], 2.0, "settings saved")
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	f.store_string("not json")
+	f.close()
+	_eq(Profile.load_or_new(path).runs, 0, "corrupt save starts fresh")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
