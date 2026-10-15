@@ -41,7 +41,9 @@ godot --headless --path . --script res://tools/run_duel.gd -- burn turtle --trac
 godot --headless --path . --script res://tools/run_duel.gd -- --matrix --seeds 3
 ```
 
-The runner also takes `--seed N` and `--boss` (a 60-second fight).
+The runner also takes `--seed N` and `--boss` (a 60-second fight). `--dps` runs each build against an empty wand with bottomless HP and no escalation, and reports raw damage output and mana starvation.
+
+Matrix cells show the win rate, then the row build's HP% minus the column build's HP% at the end. Duels are deterministic apart from shuffled frames, so the margin shows a close matchup better than the win rate does.
 
 ## Rules the scope left open (current interpretation)
 
@@ -55,8 +57,10 @@ The runner also takes `--seed N` and `--boss` (a 60-second fight).
 - **Arc's chain:** an extra hit at half damage that applies no statuses, so it consumes the Shock Arc just applied.
 - **Status order on a hit:** Wet, then Burn, then Chill, then Shock. One projectile can't freeze a target and steam it.
 - **Wet:** applying Wet to a burning target removes the Burn and uses up the Wet. Shock bonus damage doubles on a Wet target and uses up the Wet.
+- **Burn cap:** a target holds at most 4 Burn stacks. Burn only loses one stack per tick, so without a cap the stacks grew without limit.
 - **Ember Staff:** adds +1 Burn stack to every Burn it applies.
+- **Freeze:** a frozen caster skips its next cast and waits at least 0.7 s before the one after.
 - **Glacier Wand:** its Chill stops decaying until the target freezes.
 - **Escalation:** damage amplification starts halfway through the fight and reaches ×3 at the fight length (30 s, or 60 s for the boss). If nobody has died by twice the fight length, the higher HP fraction wins.
 
-The tuning numbers are constants at the top of `sim/duel.gd` and fields on the `.tres` files.
+The tuning numbers are constants at the top of `sim/duel.gd`, caster HP (250) in `sim/caster.gd`, and fields on the `.tres` files.

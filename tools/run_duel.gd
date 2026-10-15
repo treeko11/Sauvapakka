@@ -18,6 +18,8 @@ func _initialize() -> void:
 	var boss := "--boss" in args
 	if "--matrix" in args:
 		_matrix(db, int(_flag_value(args, "--seeds", "3")), boss)
+	elif "--dps" in args:
+		_dps(db, p_seed)
 	else:
 		var names := PackedStringArray()
 		for a in args:
@@ -45,28 +47,72 @@ func _matrix(db: SpellDB, seeds: int, boss: bool) -> void:
 	var header := "%-*s" % [width, "row wins vs"]
 	for n in names:
 		header += "%*s" % [width, n.left(width - 1)]
-	print(header)
+	print(header + "%*s" % [width, "matchups won"])
 	var total_seconds := 0.0
 	var duels := 0
+	var timeouts := 0
 	for i in builds.size():
 		var line := "%-*s" % [width, names[i].left(width - 1)]
+		var won := 0.0
 		for j in builds.size():
 			if i == j:
 				line += "%*s" % [width, "-"]
 				continue
 			var wins := 0.0
+			# Row's HP% minus column's HP% at the end, so close matchups stand out.
+			var margin := 0.0
 			for s in seeds:
 				var d := Duel.new(builds[i], builds[j], db, s, boss)
 				var w := d.run()
 				total_seconds += d.seconds()
+				if d.seconds() >= d.hard_cap_seconds:
+					timeouts += 1
 				duels += 1
 				if w == 0:
 					wins += 1.0
 				elif w == Duel.DRAW:
 					wins += 0.5
-			line += "%*s" % [width, "%d%%" % roundi(100.0 * wins / seeds)]
-		print(line)
-	print("\n%d duels, average length %.1fs" % [duels, total_seconds / duels])
+				var c := d.casters
+				margin += 100.0 * (maxf(0.0, c[0].hp) / c[0].max_hp - maxf(0.0, c[1].hp) / c[1].max_hp)
+			won += wins / seeds
+			line += "%*s" % [width, "%d%% %+d" % [roundi(100.0 * wins / seeds), roundi(margin / seeds)]]
+		print(line + "%*s" % [width, "%.1f" % won])
+	print("
+%d duels, average length %.1fs, %d decided by HP at the cap" % [duels, total_seconds / duels, timeouts])
+	print("Cells: win rate, then row's HP% minus column's HP% at the end.")
+
+
+## Each build against an empty wand with bottomless HP and no escalation, so the
+## numbers are raw output: time to deal 100 damage, damage over 30 s by cause,
+## and how many draws failed for lack of mana.
+func _dps(db: SpellDB, p_seed: int) -> void:
+	var dummy := WandBuild.new()
+	dummy.display_name = "Dummy"
+	dummy.frame = load("res://data/frames/apprentice_rod.tres")
+	print("%-15s%8s%8s%8s%8s%8s%8s%8s" % ["build", "to 100", "30s dmg", "hit", "burn", "steam", "dps", "no_mana"])
+	for n in _build_names():
+		var d := Duel.new(_load_build(n), dummy, db, p_seed)
+		d.amp_at_end = 1.0
+		d.hard_cap_seconds = 30.0
+		d.casters[1].max_hp = 1e9
+		d.casters[1].hp = 1e9
+		d.run()
+		var by_cause := {"hit": 0.0, "burn": 0.0, "steam": 0.0}
+		var total := 0.0
+		var to_100 := -1.0
+		var no_mana := 0
+		for e in d.events:
+			if e["type"] == "no_mana" and e["who"] == 0:
+				no_mana += 1
+			if e["type"] != "damage" or e["who"] != 1:
+				continue
+			total += e["amount"]
+			by_cause[e["cause"]] += e["amount"]
+			if to_100 < 0.0 and total >= 100.0:
+				to_100 = e["tick"] * Duel.TICK
+		print("%-15s%8s%8.0f%8.0f%8.0f%8.0f%8.1f%8d" % [n.left(14),
+			"never" if to_100 < 0.0 else "%.1fs" % to_100, total,
+			by_cause["hit"], by_cause["burn"], by_cause["steam"], total / 30.0, no_mana])
 
 
 func _print_result(d: Duel) -> void:

@@ -11,6 +11,6 @@ description = "Low damage plus 2 Chill."
 kind = 0
 rarity = 0
 mana_cost = 10
-damage = 2.0
+damage = 3.0
 chill = 2
 travel_time = 0.4

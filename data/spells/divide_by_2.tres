@@ -13,4 +13,4 @@ rarity = 1
 mana_cost = 10
 draw = 1
 copies = 2
-damage_mult = 0.5
+damage_mult = 0.7

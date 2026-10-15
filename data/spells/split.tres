@@ -12,4 +12,4 @@ kind = 1
 rarity = 1
 mana_cost = 10
 split_into = 3
-damage_mult = 0.4
+damage_mult = 0.3

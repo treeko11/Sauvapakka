@@ -110,7 +110,7 @@ func test_triple_spell_penalty() -> void:
 	var d := _duel(["triple_spell", "flicker", "flicker", "flicker"])
 	var shots := d.cast_now(0)
 	_eq(shots.size(), 3, "Triple Spell fires 3")
-	_eq(shots[2].damage_mult, 0.85, "damage penalty applies")
+	_eq(shots[2].damage_mult, _spell("triple_spell").damage_mult, "damage penalty applies")
 
 
 func test_recharge_after_last_slot() -> void:
@@ -167,14 +167,14 @@ func test_divide_by_2() -> void:
 	var d := _duel(["divide_by_2", "magic_missile"])
 	var shots := d.cast_now(0)
 	_eq(shots.size(), 2, "cast twice")
-	_eq(shots[0].damage_mult, 0.5, "half damage each")
+	_eq(shots[0].damage_mult, _spell("divide_by_2").damage_mult, "reduced damage each")
 
 
 func test_split() -> void:
 	var d := _duel(["split", "flicker"])
 	var shots := d.cast_now(0)
 	_eq(shots.size(), 3, "becomes 3")
-	_eq(shots[0].damage_mult, 0.4, "weaker")
+	_eq(shots[0].damage_mult, _spell("split").damage_mult, "weaker")
 
 
 func test_trigger_carries_payload() -> void:
@@ -224,7 +224,7 @@ func test_ward_blocks_per_hit() -> void:
 	var s := d.cast_now(0)[0]
 	d.arrive_now(s)
 	_eq(d.casters[1].wards, 0, "ward used")
-	_eq(d.casters[1].hp, 100.0 - _spell("ricochet_orb").damage, "second hit lands")
+	_eq(d.casters[1].hp, d.casters[1].max_hp - _spell("ricochet_orb").damage, "second hit lands")
 
 
 func test_piercing_ignores_ward() -> void:
@@ -232,7 +232,7 @@ func test_piercing_ignores_ward() -> void:
 	d.casters[1].wards = 1
 	d.arrive_now(d.cast_now(0)[0])
 	_eq(d.casters[1].wards, 1, "ward untouched")
-	_eq(d.casters[1].hp, 100.0 - _spell("flicker").damage, "damage lands")
+	_eq(d.casters[1].hp, d.casters[1].max_hp - _spell("flicker").damage, "damage lands")
 
 
 func test_reflect_fires_payload_at_reflector() -> void:
@@ -265,7 +265,7 @@ func test_wet_doubles_shock() -> void:
 	d.casters[1].shock = 1
 	d.casters[1].wet = 1
 	d.arrive_now(d.cast_now(0)[0])
-	_eq(d.casters[1].hp, 100.0 - _spell("flicker").damage - 2.0 * Duel.SHOCK_BONUS_PER_STACK, "double shock bonus")
+	_eq(d.casters[1].hp, d.casters[1].max_hp - _spell("flicker").damage - 2.0 * Duel.SHOCK_BONUS_PER_STACK, "double shock bonus")
 	_eq(d.casters[1].shock, 0, "shock consumed")
 
 
@@ -291,12 +291,26 @@ func test_frozen_skips_next_cast() -> void:
 	_check(not d.casters[0].frozen, "thawed")
 
 
+func test_frozen_waits_before_next_cast() -> void:
+	var d := _duel(["flicker"])
+	d.casters[0].frozen = true
+	d.cast_now(0)
+	_eq(d.casters[0].wand.next_cast_tick, d.tick + roundi(Duel.FROZEN_SECONDS * Duel.TICKS_PER_SECOND), "frozen wait")
+
+
+func test_burn_stacks_cap() -> void:
+	var d := _duel(["ember"])
+	d.casters[1].burn = Duel.MAX_BURN_STACKS - 1
+	d.arrive_now(d.cast_now(0)[0])
+	_eq(d.casters[1].burn, Duel.MAX_BURN_STACKS, "capped")
+
+
 func test_burn_on_frozen_steams() -> void:
 	var d := _duel(["ember"])
 	d.casters[1].frozen = true
 	d.arrive_now(d.cast_now(0)[0])
 	_check(not d.casters[1].frozen, "thawed")
-	_eq(d.casters[1].hp, 100.0 - _spell("ember").damage - Duel.STEAM_DAMAGE, "steam burst")
+	_eq(d.casters[1].hp, d.casters[1].max_hp - _spell("ember").damage - Duel.STEAM_DAMAGE, "steam burst")
 
 
 func test_glacier_chill_does_not_decay() -> void:

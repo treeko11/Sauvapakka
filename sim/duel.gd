@@ -19,11 +19,16 @@ const MIN_CAST_DELAY := 0.05
 # Status tuning.
 const BURN_INTERVAL := 0.5
 const BURN_DAMAGE_PER_STACK := 1.0
+## Burn loses one stack per interval, so without a cap stacks pile up faster
+## than they decay and damage grows without limit.
+const MAX_BURN_STACKS := 4
 const CHILL_DECAY_INTERVAL := 2.0
 const CHILL_FREEZE_AT := 5
 const CHILL_SLOW_PER_STACK := 0.1
+## A frozen caster skips its next cast and waits at least this long before the one after.
+const FROZEN_SECONDS := 0.7
 const SHOCK_BONUS_PER_STACK := 5.0
-const STEAM_DAMAGE := 15.0
+const STEAM_DAMAGE := 12.0
 const CHAIN_DAMAGE_MULT := 0.5
 
 enum { RUNNING = -2, DRAW = -1 }
@@ -115,7 +120,7 @@ func _cast(c: Caster) -> Array[Shot]:
 	if c.frozen:
 		c.frozen = false
 		_log("frozen_skip", c.index)
-		w.next_cast_tick = tick + maxi(1, _ticks(w.frame.cast_delay * chill_factor))
+		w.next_cast_tick = tick + maxi(1, _ticks(maxf(FROZEN_SECONDS, w.frame.cast_delay * chill_factor)))
 		return []
 
 	var ctx := CastContext.new()
@@ -377,7 +382,7 @@ func _hit(s: Shot, target: Caster, attacker: Caster, chain_hit: bool) -> void:
 			target.wet = 0
 			_log("doused", target.index, {"uid": s.uid})
 		else:
-			target.burn += s.burn
+			target.burn = mini(MAX_BURN_STACKS, target.burn + s.burn)
 	if s.chill > 0:
 		if target.wet > 0:
 			target.wet = 0

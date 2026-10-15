@@ -10,6 +10,6 @@ type_label = "Defence"
 description = "Blocks the next 2 hits."
 kind = 3
 rarity = 0
-mana_cost = 20
+mana_cost = 18
 ward_hits = 2
 cast_delay = 0.1

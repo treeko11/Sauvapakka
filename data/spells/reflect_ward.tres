@@ -10,6 +10,6 @@ type_label = "Defence"
 description = "Blocks 1 hit and sends it back."
 kind = 3
 rarity = 1
-mana_cost = 25
+mana_cost = 20
 reflect_hits = 1
 cast_delay = 0.1
