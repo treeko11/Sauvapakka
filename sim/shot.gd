@@ -15,6 +15,7 @@ var damage_mult := 1.0
 var hits := 1
 var chain := 0
 var travel_time := 0.5
+var launch_tick := 0
 var arrive_tick := 0
 var bounces := 0
 

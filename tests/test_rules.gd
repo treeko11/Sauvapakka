@@ -321,3 +321,31 @@ func test_mana_leech_steals() -> void:
 	d.arrive_now(d.cast_now(0)[0])
 	_eq(d.casters[1].wand.mana, 100.0 - _spell("mana_leech").mana_drain, "target lost mana")
 	_eq(d.casters[0].wand.mana, 50.0 - _spell("mana_leech").mana_cost + _spell("mana_leech").mana_drain, "caster gained it")
+
+
+func test_shuffle_frame_varies_by_seed() -> void:
+	var b := load("res://data/builds/scatter.tres") as WandBuild
+	_check(b.frame.shuffle, "Scatter uses a shuffle frame")
+	var orders := {}
+	for s in 8:
+		orders[str(Duel.new(b, b, db, s).casters[0].wand.order)] = true
+	_check(orders.size() > 1, "different seeds give different orders")
+	_eq(str(Duel.new(b, b, db, 3).casters[0].wand.order), str(Duel.new(b, b, db, 3).casters[0].wand.order), "same seed, same order")
+
+
+func test_escalation_starts_late() -> void:
+	var d := _duel(["flicker"])
+	d.tick = roundi(d.fight_seconds * Duel.ESCALATION_START * Duel.TICKS_PER_SECOND)
+	_eq(d._amp(), 1.0, "no amplification before the start")
+	d.tick = roundi(d.fight_seconds * Duel.TICKS_PER_SECOND)
+	_eq(d._amp(), d.amp_at_end, "full amplification at the fight length")
+
+
+func test_summary_records_interactions() -> void:
+	var d := _duel(["ember"])
+	d.casters[1].frozen = true
+	d.arrive_now(d.cast_now(0)[0])
+	var s := DuelSummary.stats(d)
+	_check(s["interactions"].has("steam"), "steam discovered")
+	_eq(s["by_cause"]["steam"], Duel.STEAM_DAMAGE, "steam damage credited")
+	_eq(s["biggest_spell"], &"ember", "biggest hit spell")

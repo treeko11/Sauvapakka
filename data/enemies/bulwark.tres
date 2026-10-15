@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyDef" format=3]
+
+[ext_resource type="Script" path="res://game/enemy_def.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = &"bulwark"
+display_name = "Bulwark"
+themed = true
+traits = PackedStringArray("Shielded")
+counter = "Piercing, multicast spam"
+spell_pool = PackedStringArray("ward", "ward", "ricochet_orb", "flicker", "flicker", "ember", "damage_plus")
+frames = PackedStringArray()
+max_hp = 180.0
+min_depth = 0
+max_depth = 9
+robe = Color(0.780, 0.808, 0.839, 1)

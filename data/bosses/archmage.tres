@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyDef" format=3]
+
+[ext_resource type="Script" path="res://game/enemy_def.gd" id="1_enemy"]
+[ext_resource type="Resource" path="res://data/bosses/archmage_wand.tres" id="2_build"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = &"archmage"
+display_name = "Archmage"
+themed = true
+traits = PackedStringArray("Escalating", "Shielded", "Burns")
+counter = "Sustained damage for a full minute"
+max_hp = 410.0
+robe = Color(0.725, 0.549, 1, 1)
+fixed_build = ExtResource("2_build")

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="FrameDef" format=3]
+
+[ext_resource type="Script" path="res://sim/frame_def.gd" id="1_frame"]
+
+[resource]
+script = ExtResource("1_frame")
+id = &"archmage_staff"
+display_name = "Archmage Staff"
+capacity = 8
+spells_per_cast = 1
+cast_delay = 0.38
+recharge_time = 1.2
+mana_max = 220.0
+mana_regen = 45.0
+rule = 0

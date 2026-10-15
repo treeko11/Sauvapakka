@@ -1,0 +1,166 @@
+extends SceneTree
+## Smoke tests for the screens: they build, run to completion and don't error.
+##   godot --headless --script res://tests/test_ui.gd
+
+var db: SpellDB
+var checks := 0
+var failures := 0
+var _current := ""
+
+
+func _initialize() -> void:
+	db = SpellDB.load_default()
+	for m in get_script().get_script_method_list():
+		if m.name.begins_with("test_"):
+			_current = m.name
+			await call(m.name)
+	print("%d checks, %d failed" % [checks, failures])
+	quit(1 if failures > 0 else 0)
+
+
+func _check(ok: bool, what: String) -> void:
+	checks += 1
+	if not ok:
+		failures += 1
+		printerr("FAIL %s: %s" % [_current, what])
+
+
+const TEST_PROFILE := "user://test_ui_profile.json"
+
+
+## The app with a throwaway profile, so tests never touch a real save.
+func _app() -> App:
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PROFILE))
+	var app := (load("res://ui/app.tscn") as PackedScene).instantiate() as App
+	app.profile = Profile.load_or_new(TEST_PROFILE)
+	return app
+
+
+func _build(name: String) -> WandBuild:
+	return load("res://data/builds/%s.tres" % name)
+
+
+## Runs a duel screen to its end panel by feeding large frame deltas.
+func _run_to_end(screen: DuelScreen) -> void:
+	for i in 2000:
+		screen._process(0.25)
+		if screen._ended:
+			break
+
+
+func test_duel_screen_plays_to_end() -> void:
+	var screen := DuelScreen.new()
+	screen.setup(_build("steam_trigger"), _build("turtle"), db, 1)
+	root.add_child(screen)
+	await process_frame
+	var winner := [-99]
+	screen.finished.connect(func(w: int) -> void: winner[0] = w)
+	screen._process(1.0)
+	_check(not screen.duel.in_flight.is_empty() or screen.duel.tick > 0, "duel advances")
+	screen._set_paused(true)
+	var before := screen.duel.tick
+	screen._process(1.0)
+	_check(screen.duel.tick == before, "pause stops the sim")
+	screen._set_paused(false)
+	_run_to_end(screen)
+	_check(screen._ended, "duel ends")
+	_check(screen._end_panel != null, "end panel shown")
+	screen._restart()
+	_check(screen.duel.tick == 0 and not screen._ended, "watch again restarts")
+	screen.queue_free()
+
+
+func test_inspect_describes_every_spell() -> void:
+	var screen := DuelScreen.new()
+	screen.setup(_build("steam_trigger"), _build("wide_multicast"), db)
+	root.add_child(screen)
+	await process_frame
+	var seen := {}
+	for i in 400:
+		screen._process(0.05)
+		for s in screen.duel.in_flight:
+			if not seen.has(s.spell.id):
+				seen[s.spell.id] = true
+				_check(screen.describe_shot(s).begins_with(s.spell.display_name), "describes %s" % s.spell.id)
+	_check(seen.size() >= 4, "saw several spells in flight")
+	screen.queue_free()
+
+
+func test_training_dummy() -> void:
+	var dummy := WandBuild.new()
+	dummy.display_name = "Training Dummy"
+	dummy.frame = load("res://data/frames/apprentice_rod.tres")
+	var screen := DuelScreen.new()
+	screen.setup(_build("burn"), dummy, db, 0, false, true)
+	root.add_child(screen)
+	await process_frame
+	_run_to_end(screen)
+	_check(screen._ended, "dummy session ends")
+	_check(is_equal_approx(screen.duel.seconds(), 30.0), "runs 30 s")
+	_check(screen.duel.casters[1].hp > 0.0, "dummy survives")
+	screen.queue_free()
+
+
+func test_app_menu_and_viewer() -> void:
+	var app := _app()
+	root.add_child(app)
+	await process_frame
+	_check(app.current is MainMenu, "starts on the menu")
+	app.show_screen(DuelViewer.new(app))
+	await process_frame
+	(app.current as DuelViewer)._watch(false)
+	await process_frame
+	_check(app.current is DuelScreen, "viewer opens a duel")
+	app.queue_free()
+
+
+## Plays a whole run through the real screens, always taking the first wand.
+func test_full_run_through_screens() -> void:
+	var app := _app()
+	root.add_child(app)
+	await process_frame
+	app.new_run(7)
+	await process_frame
+	_check(app.current is PreviewScreen, "run opens on the preview")
+	var flow := app.flow
+	var guard := 0
+	while flow.run.phase != RunState.Phase.WON and flow.run.phase != RunState.Phase.LOST and guard < 20:
+		guard += 1
+		flow.start_workshop()
+		await process_frame
+		_check(app.current is Workshop, "workshop shown")
+		var ws := app.current as Workshop
+		ws._apply({"from": "hand", "i": 0}, {"to": "slot", "w": 1, "s": 0})
+		await process_frame
+		flow.show_book()
+		await process_frame
+		_check(app.current is SpellBookScreen, "spell book shown")
+		flow.show_choose()
+		await process_frame
+		_check(app.current is ChooseScreen, "choose shown")
+		flow.fight(0)
+		await process_frame
+		var duel_screen := app.current as DuelScreen
+		_run_to_end(duel_screen)
+		# Force wins so every screen in the ladder gets visited.
+		duel_screen.duel.winner = 0
+		duel_screen.finished.emit(0)
+		await process_frame
+		if app.current is RewardScreen:
+			var rs := app.current as RewardScreen
+			rs._on_pick(null, flow.run.reward_options[0])
+			rs._on_frame(-1 if flow.run.frame_drop != null else -2)
+			rs._confirm()
+			await process_frame
+			_check(app.current is PreviewScreen, "next preview after rewards")
+	_check(app.current is RunEndScreen, "run ends on the end screen")
+	_check(flow.run.phase == RunState.Phase.WON, "boss beaten")
+	_check(flow.run.wands.size() == RunState.MAX_WANDS, "frame drops added wands")
+	var saved := Profile.load_or_new(TEST_PROFILE)
+	_check(saved.runs == 1 and saved.wins == 1 and saved.best_fight == 7, "run saved to the profile")
+	_check(saved.spells_found.size() >= RunState.STARTER_LIBRARY.size(), "found spells saved")
+	app.show_screen(CompendiumScreen.new(app))
+	await process_frame
+	_check(app.current is CompendiumScreen, "compendium opens")
+	_check(flow.run.results.size() >= 1, "results recorded")
+	app.queue_free()
